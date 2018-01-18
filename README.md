@@ -1,2 +1,2 @@
-# performance
-Stuff performance related
+# Performance
+My ramblings in the world of performance.

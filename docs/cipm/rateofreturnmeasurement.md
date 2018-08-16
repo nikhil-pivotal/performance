@@ -336,7 +336,7 @@ The return of a portfolio using its segments is calculated as the weighted sum o
 R = w1R1 + w2R2
 
 w1 + w2 = 1
-```
+``` 
 
 It is important to adjust weights of the segments along with their returns, especially when breaking the portfolio segments into holding sub-periods and especially when the segments have cash flows during those sub-periods.
 This is done using the Modified Dietz method of calculating the adjusted begin market value `V0-adj = V0 + sum(CkWk)` and using this adjusted begin market value to calculate the weights.

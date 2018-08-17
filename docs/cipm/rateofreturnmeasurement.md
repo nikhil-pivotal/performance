@@ -32,15 +32,15 @@ Two Cases:
  * Any gains from reinvested income are included in the income return
  
 ```
-R = (V1 - V0 / V0) - (V1x - V0x / V0x)  // Total return - Price return gives income return
+IR = (V1 - V0 / V0) - (V1x - V0x / V0x)  // Total return - Price return gives income return
                                         // Income return will include the re-investment return   
 ```
 
  * Any gains from reinvested income are included in the price return
 
 ```
-R = V1 - V0 -D / V0       // Price Return  (leave gain from re-investment in, just take out the income component)
-R = D / V0                // Income Return
+PR = V1 - V0 -D / V0       // Price Return  (leave gain from re-investment in, just take out the income component)
+IR = D / V0                // Income Return
 ```
 
 Note that in both cases, the actual income received by the portfolio will always be the basis of the income return. The points above simply determine how to classify the capital gains (or losses) on the income re-invested. 
@@ -77,7 +77,7 @@ Rbase = V1foreign * Spot Domestic/Foreign / V0foreign * Spot Domestic/Foreign  -
 
 Return in Local Currency = ViForeign/V0Foreign - 1
 
-Currency Return = Spot1 Domestic/Foreign / Sport0 Domestic/Foreign  - 1
+Currency Return = Spot1 Domestic/Foreign / Spot0 Domestic/Foreign  - 1
 
 Total Return = (1 + Return in Local Currency) (1 + Currency Return) - 1
              = Return in Local Currency + Currency Return + (Return in Local Currency)(Currency Return)
@@ -139,6 +139,7 @@ Rm = (1 + R)^3 - 1
 
 The difference between linear returns here is the compounding effect, where you get return on return (like interest on interest). Therefore to calculate multi-period returns you can't just add up the single period returns, you need to take the product.
 
+### Interest Compounding
 The effective annual rate is dependent on the compounding period, since that takes compounding (interest on interest) into play.
 ```
 Reffective = (1 + R/n)^n - 1
@@ -204,13 +205,12 @@ However the geometric mean of the first would be 0.91% and the second would be 0
 
 
 ## External Cash Flows
-These are defined as capital that enters or exits a portfolio (Deposits or Withdrawls by investors), except for `NOF` calculations. In this case, the fee or expense is paid by transferring capital out of the portfolio and can be treated as reductions in the portfolio value (Mutual fund NAVs).
-If on the other hand fee and expense payments are treated and calculated as external cash flows, then the returns calculated are `GOF` returns.
+These are defined as capital that enters or exits a portfolio which would typically be deposits or withdrawls made by investors. 
 
 The timing and magnitude of the cash flows are important to calculate portfolio returns. Additionally, simple begin and ending market values will not be enough, we will need valuations at other time intervals as well to calculate returns for portfolios with external cash flows.
 
 ### Money Weighted Rate of Return (MWRR)
-Is the `Internal Rate of Return (IRR)`. It gives greater weight to time periods where the portfolio has greater value than to periods where the portfolio has less value.
+Is the `Internal Rate of Return (IRR)`. It gives greater weight to time periods where the portfolio has greater value than to periods where the portfolio has less value --- Hence *Money Weighted* return.
 
 ```
 Considering a portfolio with N external cash flows

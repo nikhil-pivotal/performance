@@ -141,9 +141,10 @@ Post Tax Return: (V1 - V0)(1 - T) / V0
 ```
 
 ## Multi-Period Rate of Return
-In principle, the multi-period rate of return can be calculated the same way as the single period rate of return --- If there are no external cash flows within the period.
+In principle, the multi-period rate of return can be calculated the same way as the single period rate of return --- If there are no external cash flows within the period. In practice the holding period is broken down into standard shorter periods and then chain link the individual returns together. This allows computation of the rate of return over arbitrary holding periods.
 
-To calculate multi-period returns, you (geomertically) link up the single period rates of returns by multiplying them together
+To calculate multi-period returns, you (geomertically) link up the single period rates of returns by multiplying them together. Also called *chain linking* or Geometric compounding of returns.
+
 ```
 Rm = (1+R1)(1+R2)(1+R3) - 1
 
@@ -152,34 +153,39 @@ If R1=R2=R3=R
 Rm = (1 + R)^3 - 1
 ```
 
-The difference between linear returns here is the compounding effect, where you get return on return (like interest on interest). Therefore to calculate multi-period returns you can't just add up the single period returns, you need to take the product.
+The difference between linear returns (R1 + R2 + R3) and chain linking returns here is the **compounding effect**, where you get return on return (like interest on interest). Therefore to calculate multi-period returns you can't just add up the single period returns, you need to take the product.
 
 ### Interest Compounding
-The effective annual rate is dependent on the compounding period, since that takes compounding (interest on interest) into play.
+When an interest rate is quoted, along with a compounding frequency, the **effective annual rate** must be computed and componded into the return calculation. 
+
+The effective annual rate is dependent on the compounding frequency, since that takes compounding (interest on interest) into play.
 ```
 Reffective = (1 + R/n)^n - 1
 
-For continuous compounding
+For continuous compounding  (n -> Infinity)
 Reffective = e^i
 ```
 
-## Arithmetic and Geometric Rates of Return
+## Arithmetic and Geometric Average Rates of Return
 
-### Arithmetic Return
+Returns calculated over multiple periods can be summarized by averaging over time.
+
+### Arithmetic Mean Return
 
 
 ```
 R = R1 + R2 + R3 + R4 / 4
 ```
  
-### Geometric Return
+### Geometric Mean Return
 
 ```
-R = (1 + R1)(1+ R2)(1 + R3)(1 + R4)^1/4
+R = ((1 + R1)(1+ R2)(1 + R3)(1 + R4)^1/4) -1                      // Annualized is 1 / # of years
 ``` 
  
+The Geometric mean Rate of Return can be interpreted as the constant periodic rate of return that results in the same ending value (assuming no external cash flows). Therefore, when presenting historical portfolio returns, the geometric rather than the arithmetic mean return must be used.
 
-Geometric Rate of Return is always less than or equal to the arithmatic one. Approximately
+Geometric is always less than or equal to the arithmetic one. Approximately
 
 ```
 Ra = Rg + (s^2)/2
@@ -200,33 +206,49 @@ Where R is the portfolio return and B is benchmark return
 
 Interesting to note that the Geometric excess return is the Arithmetic Excess Return expressed as a percentage of the Benchmark return 
 
+Also interesting is that Geometric returns are compoundable. So if you have the Geometric excess return for each period, and you link them together, you will end up with the cumulative Geometric excess return over the entire period. No such compounding or additive relationship exists for the arithmetic returns
+
 ```
+1 + G = (1 + R)/(1 + B) = (1 + R1)/(1 + B1) * (1 + R2)/(1 + G2) * (1 + R3)/(1 + G3) * (1+R4)/(1 + G4)
 1 + G = (1 + G1)(1 + G2)(1 + G3)(1 + G4)
 ```
-Also interesting is that Geometric returns are compoundable. So if you have the Geometric excess return for each period, and you link them together, you will end up with the cumulative Geometric excess return over the entire period. No such compounding or additive relationship exists for the arithmetic returns
 
 Geometric excess returns are also convertible across currencies.
 
 ```
 1 + R / 1 + B  = (1 + RForeign) * (1 + RCurrency) / (1 + BForeign) * (1 + RCurrency)
 ```
-This is because the currency return `RCurrency` is the same for both the Portfolio and the Benchmark, hence they cancel out.
-So what happens here, is the Geometric mean will remain the same across different currencies, since the Currency returns for the portfolio and benchmark cancel out. However the arithmetic return will differ from currency to currency.
+This is because the currency return `RCurrency` is the same for both the Portfolio and the Benchmark. So what happens here, is the Geometric mean will remain the same across different currencies, since the Currency returns for the portfolio and benchmark cancel out in the equation. However the arithmetic return will differ from currency to currency.
 
 
 Given that Geometric meean is a proportionate measure, it takes into account the percentage difference between the portfolio and benchmark return.
 So if you have a portfolio return of 51% against a benchmark return of 50% and another portfolio return of 11% against a benchmark return of 10%, both portfolios excess returns would be the same (1%)
 However the geometric mean of the first would be 0.91% and the second would be 0.67% showing that the first portfolio performed better since it had a greater percentage excess return.
 
+*Despite all of the mathematical advantages of Geometric Excess return, the Arithmetic mean return is the more commonly used one in practice.*
+
 
 ## External Cash Flows
-These are defined as capital that enters or exits a portfolio which would typically be deposits or withdrawls made by investors. 
+These are defined as capital that enters or exits a portfolio which would typically be deposits or withdrawls made by investors. Their impact would distort the plain vanilla equations to compute rate of return (V1/V0 - 1) -- they are not the decisions of the portfolio manager, which is what makes them external -- and so they need to be factored in appropriately in order to correctly reflect the rate of the portfolio.
 
 The timing and magnitude of the cash flows are important to calculate portfolio returns. Additionally, simple begin and ending market values will not be enough, we will need valuations at other time intervals as well to calculate returns for portfolios with external cash flows.
 
 ### Money Weighted Rate of Return (MWRR)
 Is the `Internal Rate of Return (IRR)`. It gives greater weight to time periods where the portfolio has greater value than to periods where the portfolio has less value --- Hence *Money Weighted* return.
 
+```
+For a portfolio with a single cash flow during the holding period
+
+V1 = V0(1 + R) + C(1 + R)^Wk
+
+C: The Cash flow -- accounts for the size of the flow
+Wk: The weight given to this cash flow -- accounts for the timing of the flow
+R: The constant rate of return (IRR) that would achieve the ending value of V1 given the begin value of V0 and the timing and magnitude of the flow of C
+```
+*The equation above seeks to eliminate from the return computation, any cash flow, or component of the cash flow, that did not contribute to the return*.
+
+
+Generalizing...
 ```
 Considering a portfolio with N external cash flows
 V1 = V0(1 + R) + sum(Ck(1 + R)^Wk)                       For k = 1 -> N
@@ -240,13 +262,17 @@ Wk = TD - Dk + 1 / TD                                Assumes beginning of day ca
 The Return is the value R that satisfies this equation, which can only be obtained by trial and error.
 
 ### Time Weighted Rate of Return (TWRR)
-Is a measure of return that is insensitive to external cash flows. Is the preferred method in the industry since it allows the evaluation of the portfolio managers performance regardless of when investors decide to make contributions or withdrawals.
+Is a measure of return that is *insensitive* to external cash flows. Is the preferred method in the industry since it allows the evaluation of the portfolio managers performance regardless of when investors decide to make contributions or withdrawals.
+
+The idea essentially is to distinguish between the growth in value due to the investments held and the growth in value due to external cash flows.
+
 The return in this method is calculated by splitting the overall holding time period into multiple sub-periods depending on the occurrance of the cash flows and calculating the return in each sub-period using the value just before and after the cash flows.
 
 ```
 R = (V1 / V0 * V2 / V1` * V3 / V2`) -1
 
-Where Vk` is the value of the portfolio just after cash flow k and Vk is the portfolio value just before cash flow k
+Where Vk` is the value of the portfolio just after cash flow k and Vk is the portfolio value just before cash flow Ck
+Vk` = Vk + Ck
 ```
 
 This could also be re-arranged to generalize it as a calculation of linked returns
@@ -281,10 +307,10 @@ NAV = V1 / U1           After an external cash flow.
 U1 = V1/ NAV
    = V0 + Cash Flow / NAV       The new number of units is the value of U1 that satisfies this equation
    
-U1 - U0 = Cash Flow /NAV   
+U1 - U0 = Cash Flow / NAV   
 ```
 
-Since the number of units adjust along with the total value of the fund after the external cash flows to keep the NAV constant, you can calculate the cumulative return of the fund during a period cash flows as
+Since the number of units adjust along with the total value of the fund after the external cash flows to keep the NAV constant, you can calculate the cumulative return of the fund during a period with cash flows as
 
 ```
 R = (NAVn / NAV0) - 1
@@ -317,11 +343,13 @@ A shortcoming of this method is that it assumes the return to be constant during
 #### Linked Modified Dietz
 In this method, the sub-period return (Step 2) is calculated by Weighting the cash flows that occur during that sub-period using the Day-weighting fraction method (See MWRR)
 
-Essentially Dietz suggested that the cash flows be weighted and added to the Beginning and Ending values of the portfolio to get the `Adjusted` Beginning and Ending Values
+Essentially Dietz suggested that the cash flows be split-weighted and added to the Beginning and Ending values of the portfolio to get the `Adjusted` Beginning and Ending Values
 
 ```
 V0-adjusted = V0 + sum(WkCk)
 V1-adjusted = V1 - sum((1 - Wk)Ck)          Weight: (1 - Wk)
+
+Cash flow Ck split into WkCk and (1 - Wk)Ck and added to Vo and V1 respectively
 
 R = V1-adjusted - V0-adjusted / V0-adjusted
 ```

@@ -137,8 +137,8 @@ therefore no longer a true time weighted return
 ### Unit Price (Unitized) Method
 
 Is a variant of the Time Weighted return and calculated using a Unit Price or a NAV value of the portfolio.
-The Net Asset Value (NAV) or Unit Price is calculated immediately before each external cash flow by dividing the
-market value by the number of units previously allocated. The Cash flow is accounted for by then adding or 
+`The Net Asset Value (NAV) or Unit Price is calculated immediately before each external cash flow by dividing the
+market value by the number of units previously allocated`. The Cash flow is accounted for by then adding or 
 subtracting (depending on the direction of the cash flow) a proportional number of units corresponding to the
 time of the cash flow. The starting unit price value of the portfolio is usually assigned a notional value of
 `1` or `100`.
@@ -154,6 +154,15 @@ external cash flows
 ```
 (1 + r) = NAVe/NAVs
         = NAV1/NAVs * NAV2/NAV1 * ...... * NAVn-2/NAV/n-1 * NAVe/NAVn-1
+```
+
+Upon an injection or withdrawl of cash flows, the number of units are increased or decreased based on the NAV
+value at the time of the cash flow.
+
+```
+NAVi = Portfolio Market Value / Number of units allocated
+
+# of new units on cash flow = Cash flow value / NAV
 ```
 
 The Unit price can reconcile to the Time Weighted Return assuming the portfolio values and timing of cash flows

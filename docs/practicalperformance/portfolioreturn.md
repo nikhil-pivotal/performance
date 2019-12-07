@@ -167,3 +167,225 @@ NAVi = Portfolio Market Value / Number of units allocated
 
 The Unit price can reconcile to the Time Weighted Return assuming the portfolio values and timing of cash flows
 are properly aligned (proving it to be a Time Weighted Return variant).
+
+### Analysis
+
+Time Weighted Return is most appropriate when you want to evaluate the managers performance regardless of the
+amount of money invested, whereas you'd use Money Weighted Returns when you want to report the performance of the
+investment. 
+
+A drawback or limitation of TWR is it's not always easy to get portfolio valuations on every external
+cash flow. In these cases we use approximations to get to performance numbers that are close approximations to
+a true Time Weighted Return
+
+### Approxmiations to Time Weighted Returns
+
+#### Index Substitutions
+
+In the absence of the portfolio valuation at the time of the cash, one way to approximate it is to use the 
+performance of a suitable index. So if the index return during a period is i % and the portfolio valuation known
+at the start of the valuation period is M, you can approximate the market value of the portfolio at the time of 
+the cash flow as follows
+
+```
+Portfolio Value at time of Cash flow = M * (1 + i/100)
+```
+
+#### Beta/Regression Method
+
+The Index valuation method can be refined (and is regarded as slightly more accurate) by adjusting it for the 
+portfolio's systematic risk as represented by the portfolio's beta to the index
+
+```
+From the snippet above
+Portfolio Beta: B
+
+Portfolio Valuation = M * (1 + (i/100)*B)
+```
+
+#### Money Weighted Return Ratio
+
+One study had proven that the ratio of the Time Weighted Return of the Portfolio to the Benchmark (Notional 
+Portfolio) is approximately equal to the ratio of the corresponding Money Weighted Return. Thus
+
+```
+(1 + MWRport)/(1 + MWRnotional) == (1 + TWRport) / (1 + TWRnotional)
+```
+Using this we can determine the TWRport given knowledge of the other three terms.
+
+
+## Hybrid Methodologies
+
+Two Hybrid methodologies that have been suggested, which essentially use a Money Weighted Return for each 
+individual (single) period, and then chain links them together to form an overall cumulative Time Weighted Return
+
+ * Linked Modified Dietz
+ * Linked IRR
+ 
+## Annualized Returns
+
+The main purpose for calculating Annualized Returns is for the convenience of using a standard time period for
+comparing returns over a long period time. i.e. It helps comparing say, two portfolios' performance over a time period of
+ten years by saying portfolio A achieved an average annual return of 5% while the other was 6%. This can be
+calculated using either the arithmetic or geometric methods.
+
+```
+Arithmetic: R = f/n * (Sigma(ri)
+
+Geometric: R = ((Product(1 + ri)) ^ f/n) - 1
+
+f: Number of time periods within a year (Frequency: Can be 12 for monthly or 4 for quarterly)
+n: Number of time periods
+```
+
+Geometric Annualized returns are accurate since they take into account the compounding effect of the annualized
+return over time. Which is why the Annualized Geometric return on compounding will ultimately equate to the 
+cumulative return
+
+
+If we assume a continuous compounding of returns, the final return will equate the value as shown below
+
+```
+1 + r = e^r` 
+r`: Return obtained in the infinitesimally small period. Also called "Force of Return"
+
+r` = ln(1 + r) 
+```
+
+An advantage of continuously compounded returns is that they are additive:
+
+```
+ln(1 + r) = ln(1 + r1) + ln(1 + r2) + ..... + ln(1 + rn)
+```
+
+## Gross of Fee and Net of Fee Calculations
+
+Important to show the effect of fees charged to the investor have on the performance of the portfolio. 
+
+Fees are normally deducted directly from the portfolio, in which case a rate of return computed on the portfolio
+as is, would be a `Net-of-Fee` ror. If no such deduction is done on the portfolio for fees, the returns are
+`Gross-of-Fee`, i.e. a return achieved without the effect of any fee charged.  Net of Fee returns can be 
+`Grossed up` by representing the fee as a negative external cash flow. This in effect neutralizes any effect of
+the fee deductions done on the portfolio thereby producing a gross of fee return from a net of fee one.
+
+```
+Portfolio BMV: 100
+Fee: 0.1
+EMV: 112
+
+Net-of-Fee return = (112 - 100) / 100  
+                  = 12%
+                  
+Gross-of-Fee return = (112 - (100 - 0.1)) / (100 - (0.1 / 2))
+                    = 12.106%                                                        
+```
+
+Effectively we are reducing the initial portfolio value and average balance by the absolute amount of the fee
+which ends up increasing the return.
+
+It is possible to convert one type of fee based return from the other like so
+
+```
+Grossing NOF up: Rg = (1 + Rn) * (1 + f) - 1
+Netting GOF down: Rn = ((1 + Rn) / (1 + f)) - 1
+
+Rf: Gof Ror
+Rn: Nof Ror
+f: Fee rate, also called Total Expense Ratio (TER)
+```
+
+## Portfolio Component Returns
+
+As we compute returns for the total portfolio, it's also necessary to calculate returns for the individual 
+components (sectors, asset classes, countries etc.). Assuming the return calculation methodologies are consistent
+the weighted sum of the return of the components should equal that of the total portfolio. `Note that the IRR 
+methodology assumes a constant rate of return for all assets invested in the portfolio it can't be used for
+component returns (it's not additive).`  Modified Dietz is typically used for component returns.
+
+```
+ri = (EMVi - (BMVi - CFi))/ (BMVi + Sum(CFi * WFi))
+
+ri: Return of component i
+EMVi: Ending Market Value for componet i
+BMVi: Begin Market Value for compnent i
+CFi: Cash flow for component i
+WFi: Cash flow weighting for component i
+
+
+r = Sum(wi * ri)
+
+r: Total portfolio return
+wi: Weight of component i in total portfolio
+
+wi = BMVi + Sum(CFi * WFi) / BMV + Sum(CF * WF)
+
+Sum(wi) = 1
+```
+
+
+### Shorts
+
+The contribution of a short position should be computed by assigning a negative weight and multiplying it by the
+negative return (assuming the price of the underlying asset fell). It is this combination of two negatives that
+result in a positive return for short positions.
+
+If the weight of the holding changes sign it is impossible to chain link (or compound) the performance of the
+underlying holding (dont know why ?).
+
+### Overlay strategies
+Asset owners may allocate a part of the investment funds to be invested in derivatives or other instruments that
+serve to hedge the risk of the other core investments. These may often be provided to a different overlay 
+investment manager who may be provided little or no funds to be physically invested resulting in small, zero or 
+negative asset values, which render traditional performance measurement methodologies useless.
+
+Instead, the value of the assets that are `overlaid` (the value of the core assets) should be included in 
+addition to the value of the overlaying assets themselves in the ror calculation of the overlaying assets. The 
+numerator would only include the value of the overlaying assets.
+
+### Multi-period component returns
+
+The performance of the overall portfolio is driven by the allocations into each of the individual components
+over time. It is therefore possible that the rate of return for the overall portfolio will be less or more than
+that of the individual components due to the timing of allocation decisions over time.
+
+eg. if a large allocation was made in Equities that had a poor performance return in that time period, the overall
+portfolio return could be lower than that of the Equities component over the cumulative investment time period.
+
+## Base and Local Currency Returns
+
+The methods of calculation described above are applicable for investments in foreign securities as well as long
+as they are converted to foreign currencies at the appropriate currency conversion rates.
+
+Investments in foreign securities will include two components:
+ * The core asset return in local currency: Achieved by a change in market value or flow of holdings in the local currency
+ * The currency return: Caused by a change in the currency conversion rate over the investment time period
+ 
+```
+(1 + Rbase) = (1 + Rlocal) * (1 + Rcurrency)
+
+Rcurrency: Currency return of currency c relative to the base currency
+``` 
+
+Although the local currency return of a portfolio consisting of assets in multiple currencies does not exist, it
+is useful to make an intermediate calculation. The local return of a multi-currency portfolio is defined as the
+weighted average local return of assets in each currency
+
+```
+Rlocal = Sum(Wi * Rlocali)
+
+Rlocali: Local currency return for currency i
+Wi: Weight of assets in currency i
+```
+
+The ratio of the base currency return with the local currency return of the portfolio calculated above will 
+provided the implicit return due to currency in the portfolio.
+
+
+
+
+
+
+
+
+ 
+ 

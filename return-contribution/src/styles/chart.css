@@ -1,0 +1,12 @@
+.container {
+    border: 1px solid lightgray;
+    margin-top: 50px;
+    margin-bottom: 10px;
+}
+
+.stacked-bar {
+}
+
+.sub-bar:hover {
+    opacity: 0.5;
+}

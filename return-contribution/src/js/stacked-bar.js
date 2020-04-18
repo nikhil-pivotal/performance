@@ -8,15 +8,14 @@ function stackedBar() {
         height: 400,
         width: 600,
         animationDuration: 2000,
-        margin: {left: 50, right: 20, top: 20, bottom: 50},
+        margin: {left: 50, right: 30, top: 20, bottom: 50},
         legend: true,
         xAxisLabel: 'Accounts',
-        yAxisLabel: 'Contribution'
+        yAxisLabel: 'Contribution',
+        stackClickHandler: (...args) => console.log(args)
     };
 
     function generator(selection) {
-        console.log("Generating a stacked Bar Chart");
-
         let scaleY,
             scaleX,
             scaleColor,
@@ -27,6 +26,11 @@ function stackedBar() {
             legend = params.legend,
             legend_generator;
 
+        // Remove any existing container
+        selection
+            .selectAll('svg')
+            .remove();
+
         // Create the chart container
         g = selection.append('svg')
                      .attr('height', params.height)
@@ -36,9 +40,9 @@ function stackedBar() {
                      .attr('transform', `translate(${params.margin.left}, ${params.margin.top})`);
 
         // Create the scales
-        scaleX = d3.scaleBand().rangeRound([0, chartWidth]).paddingOuter(0.2).paddingInner(0.05);
+        scaleX = d3.scaleBand().rangeRound([0, chartWidth]).paddingOuter(0.2).paddingInner(0.2);
         scaleY = d3.scaleLinear().range([chartHeight, 0]);
-        scaleColor = d3.scaleOrdinal().range(["firebrick", "tan", "bisque", "steelblue", "darkorange", "lightblue", "burlywood", "chocolate"]);
+        scaleColor = d3.scaleOrdinal().range(["firebrick", "turquoise", "bisque", "steelblue", "darkorange", "lightblue", "burlywood", "chocolate"]);
 
         // Create the axes generator
         axes_generator = axes()
@@ -57,7 +61,7 @@ function stackedBar() {
 
 
         selection.each(function (data) {
-            console.table(data);
+            // console.table(data);
             let nameColumn = data.columns[0];
             let numericColumns = data.columns.slice(1);
 
@@ -95,9 +99,11 @@ function stackedBar() {
             let stackedBar = g.selectAll('g')
                               .data(d3.stack().keys(numericColumns)(data))
                               .enter()
-                              .append('g')        // Each Stacked bar
-                              .attr('class', 'sub-bar')
-                              .selectAll('rect')
+                              .append('g')        // The horizontal container of one level of stacks
+                              .attr('class', 'sub-bar');
+
+            let country = stackedBar
+                              .selectAll('rect')    // Each stack within a bar
                               .data(function (row) {
                                   return row.map(function (columnData) {
                                       return {
@@ -125,11 +131,12 @@ function stackedBar() {
                               .attr('fill', function (point) {
                                   return scaleColor(point.key);
                               })
+                              .on('click', params.stackClickHandler)
             ;
 
             // Animate the bars to appear by gradually expanding to their height
             // by setting their y and height values
-            stackedBar
+            country
                 .transition()
                 .attr('y', function (point) {
                     return scaleY(point.y);
@@ -146,6 +153,18 @@ function stackedBar() {
             legend_generator(g);
         });
     }
+
+    generator.param = function (param, value) {
+        if (arguments.length == 1) {
+            return params[param];
+        }
+
+        if (params[param] !== undefined) {
+            params[param] = value;
+        }
+
+        return generator;
+    };
 
     return generator;
 }

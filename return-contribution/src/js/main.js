@@ -19,7 +19,7 @@ back.addEventListener("click", function (e) {
 });
 
 // The bar direction
-let barDirectionElem = document.getElementById('barMode');
+let barDirectionElem = document.getElementById('barmode');
 barDirectionElem.addEventListener('change', function (e) {
     app.changeBarDirection(e.currentTarget.value);
 });

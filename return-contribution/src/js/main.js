@@ -1,43 +1,23 @@
-import * as d3 from "d3";
 
-import {StackedBarChartGenerator} from "./stacked-bar";
-import Service from "./service";
+import App from "./app";
 
-let service = new Service();
-let portfolioDimension = "country";
+let app = new App();
 
+// Setup the event handlers: The bridge between html and js
+
+// Change of Report Dimension along which we want to see return contributions
 let selection = document.getElementById('dimension');
 selection.addEventListener('change', function (e) {
-    portfolioDimension = e.currentTarget.value;
-    renderChart(service.urls[portfolioDimension].root);
+    let portfolioDimension = e.currentTarget.value;
+    app.showChartForDimension(portfolioDimension);
 });
 
-let stackClickHandler = function (data, index, group) {
+// The back button to go back up the report path
+let back = document.querySelector(".back")
+back.addEventListener("click", function (e) {
+    app.showChartUpOneLevel();
+});
 
-    let dimension = data.key;
-    let portfolio = data.name;
-
-    let url = service.urls[portfolioDimension][dimension];
-
-    if (url === undefined) {
-        console.log(`Unsupported dimension ${dimension}`);
-    } else {
-        renderChart(url);
-    }
-
-};
-
-let generator = StackedBarChartGenerator()
-    .param('stackClickHandler', stackClickHandler)
-    .param('level', 0);
-
-
-function renderChart(url) {
-    d3.csv(url)
-      .then(function (data) {
-          d3.select('.container')
-            .datum(data)
-            .call(generator);
-      });
-}
-
+// Kick off with the initial rendering call with a default initial value
+let portfolioDimension = selection.value;
+app.showChartForDimension(portfolioDimension);

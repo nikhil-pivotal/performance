@@ -2,7 +2,9 @@ export default class Service {
 
     constructor() {
         this.urls = {
-            'root': '/flat/dummy-data.csv',
+            'account': {
+                'account': '/flat/dummy-data.csv'
+            },
             'country': {
                 'country': 'flat/dummy-data-country.csv',
                 'FR': 'flat/dummy-data-country-france-security.csv'
@@ -18,7 +20,8 @@ export default class Service {
             'sector': {
                 'sector': '/flat/dummy-data-sector.csv',
                 'INFORMATION TECHNOLOGY': '/flat/dummy-data-sector-industry.csv',
-                'Electronic Equipment': '/flat/dummy-data-sector-industry-sub-industry.csv'
+                'Electronic Equipment': '/flat/dummy-data-sector-industry-sub-industry.csv',
+                'Electronic Components': '/flat/dummy-data-country-france-security.csv'
             }
         };
     }

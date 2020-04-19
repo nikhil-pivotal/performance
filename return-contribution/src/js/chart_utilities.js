@@ -99,9 +99,10 @@ function legend() {
     // The main generator function
     function generator(chart_container_group) {
         let g = chart_container_group;
+        let iconWidth = 20;
 
         let legend = g.append('g')
-            .attr('transform', `translate(${chartWidth + 20}, 0)`)
+            .attr('transform', `translate(${chartWidth+marginRight-iconWidth}, 0)`)
             .attr("font-family", "sans-serif")
             .attr("font-size", 10)
             .selectAll('g')
@@ -113,7 +114,7 @@ function legend() {
             });
 
         legend.append('rect')
-            .attr('width', 20)
+            .attr('width', iconWidth)
             .attr('height', 19)
               .attr('class', 'sub-bar')
             .attr('fill', scaleColor);

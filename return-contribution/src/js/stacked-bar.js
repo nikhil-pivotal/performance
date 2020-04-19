@@ -6,9 +6,9 @@ function stackedBar() {
 
     let params = {
         height: 400,
-        width: 600,
+        width: 700,
         animationDuration: 2000,
-        margin: {left: 50, right: 30, top: 20, bottom: 50},
+        margin: {left: 50, right: 100, top: 20, bottom: 50},
         legend: true,
         xAxisLabel: 'Accounts',
         yAxisLabel: 'Contribution',

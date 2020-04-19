@@ -18,6 +18,5 @@ back.addEventListener("click", function (e) {
     app.showChartUpOneLevel();
 });
 
-// Kick off with the initial rendering call with a default initial value
-let portfolioDimension = selection.value;
-app.showChartForDimension(portfolioDimension);
+// Kick off with the initial rendering call with a default root dimension
+app.showChartForDimension();

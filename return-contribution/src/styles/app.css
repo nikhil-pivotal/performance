@@ -6,7 +6,6 @@
 
 body {
     margin: 20px auto;
-    text-align: center;
     width: 80%;
 }
 
@@ -16,6 +15,11 @@ footer {
 
 .chart-controls {
     margin-top: 50px;
+}
+
+.report-path {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .container {

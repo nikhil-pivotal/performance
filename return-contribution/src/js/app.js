@@ -105,5 +105,8 @@ export default class App {
 
     changeBarDirection(barDirection) {
         console.log("Change bar direction and re-render the chart");
+
+        this.generator.param("direction", barDirection);
+        this.showChart();
     }
 }

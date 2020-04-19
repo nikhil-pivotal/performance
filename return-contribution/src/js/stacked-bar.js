@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import {Axes as axes} from "./chart_utilities";
 import {legend as legendFactory} from "./chart_utilities";
+import {BAR_DIRECTION_HORIZONTAL, BAR_DIRECTION_VERTICAL} from "./constants";
 
 function stackedBar() {
 
@@ -10,14 +11,15 @@ function stackedBar() {
         animationDuration: 2000,
         margin: {left: 50, right: 100, top: 20, bottom: 50},
         legend: true,
-        xAxisLabel: 'Accounts',
-        yAxisLabel: 'Contribution',
+        xAxisLabel: 'Contribution',
+        yAxisLabel: 'Accounts',
+        direction: BAR_DIRECTION_HORIZONTAL,
         stackClickHandler: (...args) => console.log(args)
     };
 
     function generator(selection) {
-        let scaleY,
-            scaleX,
+        let scaleContributions,
+            scaleAccounts,
             scaleColor,
             g,
             axes_generator,
@@ -40,18 +42,18 @@ function stackedBar() {
                      .attr('transform', `translate(${params.margin.left}, ${params.margin.top})`);
 
         // Create the scales
-        scaleX = d3.scaleBand().rangeRound([0, chartWidth]).paddingOuter(0.2).paddingInner(0.2);
-        scaleY = d3.scaleLinear().range([chartHeight, 0]);
+        scaleAccounts = d3.scaleBand().rangeRound(params.direction === BAR_DIRECTION_HORIZONTAL ? [chartHeight, 0]: [0, chartWidth]).paddingOuter(0.2).paddingInner(0.2);
+        scaleContributions = d3.scaleLinear().range(params.direction === BAR_DIRECTION_HORIZONTAL ? [0, chartWidth]: [chartHeight, 0]);
         scaleColor = d3.scaleOrdinal().range(["firebrick", "turquoise", "bisque", "steelblue", "darkorange", "lightblue", "burlywood", "chocolate"]);
 
         // Create the axes generator
         axes_generator = axes()
             .chartHeight(chartHeight)
             .chartWidth(chartWidth)
-            .scaleX(scaleX)
-            .scaleY(scaleY)
-            .xAxisLabel(params.xAxisLabel)
-            .yAxisLabel(params.yAxisLabel);
+            .scaleX(params.direction === BAR_DIRECTION_HORIZONTAL ? scaleContributions : scaleAccounts)
+            .scaleY(params.direction === BAR_DIRECTION_HORIZONTAL ? scaleAccounts: scaleContributions)
+            .xAxisLabel(params.direction === BAR_DIRECTION_HORIZONTAL ? params.xAxisLabel : params.yAxisLabel)
+            .yAxisLabel(params.direction === BAR_DIRECTION_HORIZONTAL ? params.yAxisLabel : params.xAxisLabel);
 
         // Create the legend generator
         legend_generator = legendFactory()
@@ -83,14 +85,14 @@ function stackedBar() {
                 });
 
             // Set the domain values on the scales
-            scaleX.domain(
+            scaleAccounts.domain(
                 data.map(
                     function (row) {
                         return row[nameColumn];
                     }
                 )
             );
-            scaleY.domain([0, d3.max(data, function (row) {
+            scaleContributions.domain([0, d3.max(data, function (row) {
                 return row.total;
             })]);
             scaleColor.domain(numericColumns);
@@ -108,25 +110,31 @@ function stackedBar() {
                                   return row.map(function (columnData) {
                                       return {
                                           name: columnData.data[nameColumn],
-                                          y: columnData[1],
-                                          height: (columnData[1] - columnData[0]),
-                                          key: row.key
+                                          key: row.key,
+                                          // For vertical rects, the start has to be set to the end of the range and
+                                          // not the start. This is because when you position the y value of the rect
+                                          // you do so relative to the top left corner. So you set the y value of
+                                          // the rect to the range end which positions that rect's top left corner
+                                          // and the height of the rect to the difference between the start and end
+                                          // of the range which will position the base line of the vertical rect.
+                                          start: params.direction === BAR_DIRECTION_HORIZONTAL ? columnData[0] : columnData[1],
+                                          end: (columnData[1] - columnData[0])
                                       }
                                   })
                               })
                               .enter()
                               .append('rect')
                               .attr('x', function (point) {
-                                  return scaleX(point.name);
+                                  return params.direction === BAR_DIRECTION_HORIZONTAL ? 0 : scaleAccounts(point.name);
                               })
                               .attr('y', function (point) {
-                                  return scaleY(0);
+                                  return params.direction === BAR_DIRECTION_HORIZONTAL ? scaleAccounts(point.name) : scaleContributions(0);
                               })
                               .attr('width', function (point) {
-                                  return scaleX.bandwidth();
+                                  return params.direction === BAR_DIRECTION_HORIZONTAL ? 0 : scaleAccounts.bandwidth();
                               })
                               .attr('height', function (point) {
-                                  return 0;
+                                  return params.direction === BAR_DIRECTION_HORIZONTAL ? scaleAccounts.bandwidth() : 0;
                               })
                               .attr('fill', function (point) {
                                   return scaleColor(point.key);
@@ -138,11 +146,11 @@ function stackedBar() {
             // by setting their y and height values
             country
                 .transition()
-                .attr('y', function (point) {
-                    return scaleY(point.y);
+                .attr(params.direction === BAR_DIRECTION_HORIZONTAL ? 'x': 'y', function (point) {
+                    return scaleContributions(point.start);
                 })
-                .attr('height', function (point) {
-                    return chartHeight - scaleY(point.height);
+                .attr(params.direction === BAR_DIRECTION_HORIZONTAL ? 'width': 'height', function (point) {
+                    return params.direction === BAR_DIRECTION_HORIZONTAL ? scaleContributions(point.end): chartHeight - scaleContributions(point.end);
                 })
                 .duration(params.animationDuration);
 

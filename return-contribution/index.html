@@ -14,14 +14,24 @@
         <section class="chart-controls">
             <button class="back" type="button" id="back">Back</button>
 
-            <label for="dimension">Report Dimension</label>
-            <select id="dimension" name="dimension">
-                <option value="">Select</option>
-                <option value="country">Country</option>
-                <option value="currency">Currency</option>
-                <option value="assetClass">Asset Class</option>
-                <option value="sector">Sector</option>
-            </select>
+            <div class="chart-controls-dimension">
+                <label for="dimension">Report Dimension</label>
+                <select id="dimension" name="dimension">
+                    <option value="">Select</option>
+                    <option value="country">Country</option>
+                    <option value="currency">Currency</option>
+                    <option value="assetClass">Asset Class</option>
+                    <option value="sector">Sector</option>
+                </select>
+            </div>
+
+            <div class="chart-controls-bar-mode">
+                <label for="barmode">Bar Direction</label>
+                <select id="barmode">
+                    <option value="vertical" selected>Vertical</option>
+                    <option value="horizontal">Horizontal</option>
+                </select>
+            </div>
         </section>
 
         <section>

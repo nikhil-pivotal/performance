@@ -18,5 +18,11 @@ back.addEventListener("click", function (e) {
     app.showChartUpOneLevel();
 });
 
+// The bar direction
+let barDirectionElem = document.getElementById('barMode');
+barDirectionElem.addEventListener('change', function (e) {
+    app.changeBarDirection(e.currentTarget.value);
+});
+
 // Kick off with the initial rendering call with a default root dimension
 app.showChartForDimension();

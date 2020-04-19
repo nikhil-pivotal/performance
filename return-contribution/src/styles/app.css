@@ -15,6 +15,12 @@ footer {
 
 .chart-controls {
     margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.chart-controls-dimension {
+    padding-right: 40px;
 }
 
 .report-path {

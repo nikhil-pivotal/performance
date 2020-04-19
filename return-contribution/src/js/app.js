@@ -102,4 +102,8 @@ export default class App {
         // Draw the chart
         this.showChartForNode(node);
     }
+
+    changeBarDirection(barDirection) {
+        console.log("Change bar direction and re-render the chart");
+    }
 }
